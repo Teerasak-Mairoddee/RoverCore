@@ -28,7 +28,15 @@
 
 ## Problems and fixes
 
-_(none yet)_
+### M1: rover doesn't move, and there are no errors (2026-10-11)
+
+- **Observed:** WASD did nothing and the Console was clean.
+- **Hypothesis:** the controller ramped from the *measured* speed by at most 2 m/s² × 0.02 s = 0.04 m/s per step, while sliding friction (0.6 × 9.81 × 0.02 ≈ 0.12 m/s per step) took more away, so the speed stayed at zero.
+- **Test before fixing:** in Play mode, Max Linear Acceleration was raised to 20 (0.4 m/s per step). The rover moved, which confirmed the hypothesis.
+- **Fix:** ramp from the last *commanded* speed (like a motor controller's setpoint ramp) and keep measured speed for telemetry only. Give the rover collider a zero-friction material, because real wheels roll rather than slide.
+- **Regression test:** `RoverControllerTests.ForwardCommand_FromRestWithGroundFriction_DrivesForward` (Play Mode).
+- **Lesson:** a "silent" failure is often two forces cancelling out. Do the arithmetic per physics step.
+- **Trade-off:** after hitting a wall, the commanded speed stays at the target, so the rover keeps pushing until the command changes. Collision policy is handled in Milestone 4.
 
 ## Questions to revisit
 

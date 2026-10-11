@@ -68,7 +68,7 @@ Plus assembly definitions `RoverCore.Core` (no Unity references allowed), `Rover
 4. **Obstacles:** 4–6 Cubes of varied size scattered around, layer `Obstacle`. Leave clear lanes between them.
 5. **Rover:** empty `Rover` at (0, 0.3, 0), layer `Rover`.
    - `Rigidbody`: Mass 50, Interpolate, Collision Detection *Continuous*.
-   - `BoxCollider`: size (0.8, 0.4, 1.0).
+   - `BoxCollider`: size (0.8, 0.4, 1.0), with a zero-friction material: Create → Physics Material `RoverFrictionless` (Dynamic 0, Static 0, Friction Combine *Minimum*) in `Assets/_Project/Materials/`. Wheels roll, so the controller supplies grip, not friction.
    - Child `Body` cube scaled (0.8, 0.4, 1.0) with its Box Collider **removed** (the root collider is the real one).
    - Optional: four cylinder wheels as children, colliders removed. Something visibly marking the front helps.
    - `RoverController` on the root (defaults are fine).
