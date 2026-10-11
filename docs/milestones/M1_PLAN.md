@@ -1,6 +1,6 @@
 # Milestone 1: Unity environment and differential-drive rover
 
-> Status: **in progress**. Plan agreed 2026-10-11. Scripts and Edit Mode tests written; scene and Play Mode checks not yet done.
+> Status: **in progress**. Plan agreed 2026-10-11. Scripts written. Edit Mode and Play Mode tests pass in Unity 6000.6.5f1 Test Runner (run by Tee, 2026-10-11). Scene commit and concept review outstanding.
 
 ## A. Objective
 
