@@ -29,6 +29,13 @@ namespace RoverCore.Runtime.Control
         private DifferentialDrive drive;
         private DriveCommand target = DriveCommand.Stop;
 
+        // The speeds currently being sent to the "motors". They ramp towards the
+        // target from their own previous value, not from the measured speed: if they
+        // ramped from the measured speed, any resistance larger than the acceleration
+        // limit (like ground friction) would hold the rover still forever.
+        private float commandedLinear;
+        private float commandedAngular;
+
         /// <summary>The command being tracked, after speed limits were applied.</summary>
         public DriveCommand TargetCommand => target;
 
@@ -68,23 +75,23 @@ namespace RoverCore.Runtime.Control
             float dt = Time.fixedDeltaTime;
             Vector3 forward = body.rotation * Vector3.forward;
 
-            // Measure what the body is actually doing; after a collision this can
-            // differ a lot from what was last commanded.
+            // Measure what the body is actually doing. This is telemetry only: after
+            // a collision, or against friction, it can differ from what was commanded.
             ForwardSpeed = Vector3.Dot(body.linearVelocity, forward);
             // Unity's +Y rotation is clockwise from above; our convention is counter-clockwise.
             TurnRate = -body.angularVelocity.y;
 
             float maxAngularAcceleration = maxAngularAccelerationDegrees * Mathf.Deg2Rad;
-            float linear = Mathf.MoveTowards(ForwardSpeed, target.LinearSpeed, maxLinearAcceleration * dt);
-            float angular = Mathf.MoveTowards(TurnRate, target.AngularSpeed, maxAngularAcceleration * dt);
+            commandedLinear = Mathf.MoveTowards(commandedLinear, target.LinearSpeed, maxLinearAcceleration * dt);
+            commandedAngular = Mathf.MoveTowards(commandedAngular, target.AngularSpeed, maxAngularAcceleration * dt);
 
             // Wheels don't slide sideways, so velocity is only ever along the heading.
             // Keep the vertical part so gravity still works.
-            Vector3 velocity = forward * linear;
+            Vector3 velocity = forward * commandedLinear;
             velocity.y = body.linearVelocity.y;
 
             body.linearVelocity = velocity;
-            body.angularVelocity = new Vector3(0f, -angular, 0f);
+            body.angularVelocity = new Vector3(0f, -commandedAngular, 0f);
         }
     }
 }
