@@ -25,6 +25,18 @@
 - **Non-holonomic constraint:** a wheeled rover can't move sideways. The controller removes any sideways velocity each physics step.
 - **Coordinate conventions:** robotics (ROS REP-103) uses counter-clockwise-positive yaw; Unity's +Y rotation is clockwise from above. We convert once, at the controller boundary.
 - **Engine-free core assembly:** `RoverCore.Core` has `noEngineReferences`, so the compiler stops Unity types leaking into logic that should be testable on its own.
+- **`FixedUpdate` for actuation, `Update` for input:** physics steps on a fixed 0.02 s clock, so the controller's acceleration limit (`maxLinearAcceleration * fixedDeltaTime`) only means 2 m/s² if it runs once per physics step. Input is refreshed per rendered frame, so `ManualDriveInput` reads it in `Update` and only stores a target; it never touches the Rigidbody. Robot terms: the operator sends commands whenever it likes, the motor control loop applies the latest one at a fixed rate.
+- **Transform, Rigidbody, Collider in robot terms:** the Transform is the pose `(x, z, heading)`; the Rigidbody is the chassis as a mass that the motor controller acts on (mass, velocity, constraints), and it writes the pose back each step; the Collider is the rover's footprint for contact, separate from the visible mesh, and carries the surface friction material.
+- **Turn radius from wheel speeds:** `R = (W/2) · (vR + vL) / (vR − vL)`. The difference between the sides sets the turn rate, the average sets the travel speed.
+
+### Prediction check (2026-10-11)
+
+| Case | Tee's prediction | What the maths says |
+|---|---|---|
+| `vL = −vR` | Turns left sharply | `v = 0`, `ω = 2·vR/W`: spins on the spot about its own centre, with no travel. Left only if `vR > 0`. |
+| `vL = 0` | Gradual left bend | `v = vR/2`, `ω = vR/W`: pivots about the stopped left wheel at radius `W/2` = 0.35 m, whatever the speed. Tight, not gradual. |
+
+Direction was right both times; the shape was more extreme than predicted. A gradual bend needs both sides moving forward with a small difference, e.g. `vL = 1.6`, `vR = 2.0` gives a 3.15 m radius.
 
 ## Problems and fixes
 
