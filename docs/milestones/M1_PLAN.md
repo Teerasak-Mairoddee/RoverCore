@@ -1,6 +1,6 @@
 # Milestone 1: Unity environment and differential-drive rover
 
-> Status: **in progress**. Plan agreed 2026-10-11. Scripts written. Edit Mode and Play Mode tests pass in Unity 6000.6.5f1 Test Runner (run by Tee, 2026-10-11). Scene commit and concept review outstanding.
+> Status: **complete** (2026-10-11). Edit Mode and Play Mode tests pass in the Unity 6000.6.5f1 Test Runner (run by Tee). Scene built and driven manually. Concept check done (see the learning log).
 
 ## A. Objective
 
@@ -81,3 +81,11 @@ Plus assembly definitions `RoverCore.Core` (no Unity references allowed), `Rover
 - Edit Mode tests run green in Test Runner (you run them; I can't run Unity here).
 - Manual: drive forward, spin in place, turn into an obstacle and confirm the rover stops against it without tunnelling or tipping.
 - You can explain what the Rigidbody, Collider and Transform each contribute to the rover, in robot terms.
+
+## G. Review
+
+- **Built:** an engine-free kinematics core, a rate-limited Rigidbody controller, keyboard and gamepad input, a test scene with obstacles and layers, 13 Edit Mode tests and 3 Play Mode tests.
+- **Bug found and fixed:** ground friction stalled the speed ramp. The fix and the debugging process are recorded in the learning log.
+- **Known limitations:** the rover can't pitch or roll, and the terrain is flat. The rover keeps pushing after hitting a wall until the command changes, and Milestone 4 sets that policy. There's no follow-camera smoothing.
+- **Interface for Milestone 3:** the autopilot will call `RoverController.SetCommand(DriveCommand)`, exactly as `ManualDriveInput` does.
+- **Open exercise:** tank-mode toggle (Q/A, E/D).

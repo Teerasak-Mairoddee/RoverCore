@@ -1,6 +1,6 @@
 # Milestone 1: Unity environment and differential-drive rover
 
-> Status: **proposed**. Nothing here is implemented yet.
+> **Archived first draft (2026-10-11).** Kept to show how the plan evolved. Superseded by [docs/milestones/M1_PLAN.md](../docs/milestones/M1_PLAN.md), which reflects what was built.
 
 ## A. Objective
 
